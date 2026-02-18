@@ -76,11 +76,38 @@ class DepartmentController extends Controller
             'name.string' => 'O nome deve ser uma string.',
             'name.min' => 'O nome deve ter no mínimo :min caracteres.',
             'name.max' => 'O nome deve ter no máximo :max caracteres.',
-            'name.unique' => 'Já existe um departamento com este nome :nome.',
+            'name.unique' => 'Já existe um departamento com este nome.',
         ]);
 
         $department = Department::findOrFail($request->id);
         $department->update([ 'name' => $request->name ]);
+
+        return redirect()->route('departments');
+    }
+
+    public function deleteDepartment($id) : View
+    {
+        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        if ( intval($id) === 1) {
+            abort(403, 'Você não está autorizado a eliminar este departamento.');
+        }
+
+        $department = Department::findOrFail($id);
+
+        return view('department.delete-department-confirm', compact('department'));
+    }
+
+    public function deleteDepartmentConfirm($id) : RedirectResponse
+    {
+        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        if ( intval($id) === 1) {
+            abort(403, 'Você não está autorizado a eliminar este departamento.');
+        }
+
+        $department = Department::findOrFail($id);
+        $department->delete();
 
         return redirect()->route('departments');
     }
