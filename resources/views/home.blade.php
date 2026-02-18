@@ -1,6 +1,6 @@
 <x-layout-app app-title="Home">
-    <p class="display-6 text-center my-5">Bem-vindo ao RH MANGNT</p>
-    @can('admin')
-        <h3 class="text-center mt-3">Admin logado</h3>
-    @endcan
+    <div class="w-100 p-4">
+        <h3>Página inicial</h3>
+        <hr />
+    </div>
 </x-layout-app>

@@ -1,14 +1,14 @@
 <div class="d-flex flex-column sidebar pt-4">
-    <a href="{{ route('home') }}" class=""><i class="fas fa-home me-3"></i>Home</a>
+    <a href="{{ route('home') }}" class=""><i class="fas fa-home me-3"></i>Página inicial</a>
 
     @can('admin')
-        <a href="#" class=""><i class="fas fa-users me-3"></i>Colaboradores</a>
-        <a href="#" class=""><i class="fas fa-user-gear me-3"></i>Colaboradores do RH</a>
-        <a href="#" class=""><i class="fas fa-industry me-3"></i>Departamentos</a>
+        <a href="#"><i class="fas fa-users me-3"></i>Colaboradores</a>
+        <a href="#"><i class="fas fa-user-gear me-3"></i>Colaboradores do RH</a>
+        <a href="#"><i class="fas fa-industry me-3"></i>Departamentos</a>
     @endcan
 
     <hr />
-    <a href="#" class=""><i class="fas fa-cog me-3"></i>Meu perfil</a>
+    <a href="{{ route('user.profile') }}"><i class="fas fa-cog me-3"></i>Meu perfil</a>
     <hr />
     <div class="text-center mt-3">
         <form action="{{ route('logout') }}" method="post">
