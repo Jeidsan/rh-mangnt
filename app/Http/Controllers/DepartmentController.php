@@ -44,4 +44,44 @@ class DepartmentController extends Controller
 
         return redirect()->route('departments');
     }
+
+    public function editDepartment($id) : View
+    {
+        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        if ( intval($id) === 1) {
+            abort(403, 'Você não está autorizado a editar este departamento.');
+        }
+
+        $department = Department::findOrFail($id);
+
+        return view('department.edit-department', compact('department'));
+    }
+
+    public function updateDepartment(Request $request) : RedirectResponse
+    {
+        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        if ( intval($request->id) === 1) {
+            abort(403, 'Você não está autorizado a editar este departamento.');
+        }
+
+        $request->validate([
+            'id' => 'required|integer|exists:departments,id',
+            'name' => 'required|string|min:3|max:255|unique:departments,name,' . $request->id,
+        ],[
+            'id.integer' => 'O ID deve ser um número inteiro.',
+            'id.exists' => 'O departamento selecionado não existe.',
+            'name.required' => 'O campo nome é obrigatório.',
+            'name.string' => 'O nome deve ser uma string.',
+            'name.min' => 'O nome deve ter no mínimo :min caracteres.',
+            'name.max' => 'O nome deve ter no máximo :max caracteres.',
+            'name.unique' => 'Já existe um departamento com este nome :nome.',
+        ]);
+
+        $department = Department::findOrFail($request->id);
+        $department->update([ 'name' => $request->name ]);
+
+        return redirect()->route('departments');
+    }
 }
