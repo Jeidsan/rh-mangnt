@@ -1,6 +1,3 @@
-@extends('layouts.main_layout')
-@section('content')
-
-<p class="display-6 text-secondary text-center py-5">CONTENT</p>
-
-@endsection
+<x-layout-app page-title="Home">
+    <p class="display-6 text-center my-5">Bem-vindo ao RH MANGNT</p>
+</x-layout-app>
