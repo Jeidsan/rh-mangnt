@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -16,6 +16,8 @@
 </head>
 
 <body>
+
+    <x-user-bar />
 
     {{  $slot }}
 
