@@ -49,7 +49,7 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
-        if ( intval($id) === 1) {
+        if ( $this->isDepartmentBlocked($id) ) {
             abort(403, 'Você não está autorizado a editar este departamento.');
         }
 
@@ -62,7 +62,7 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
-        if ( intval($request->id) === 1) {
+        if ( $this->isDepartmentBlocked($id) ) {
             abort(403, 'Você não está autorizado a editar este departamento.');
         }
 
@@ -89,7 +89,7 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
-        if ( intval($id) === 1) {
+        if ( $this->isDepartmentBlocked($id) ) {
             abort(403, 'Você não está autorizado a eliminar este departamento.');
         }
 
@@ -102,7 +102,7 @@ class DepartmentController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
-        if ( intval($id) === 1) {
+        if ( $this->isDepartmentBlocked($id) ) {
             abort(403, 'Você não está autorizado a eliminar este departamento.');
         }
 
@@ -110,5 +110,10 @@ class DepartmentController extends Controller
         $department->delete();
 
         return redirect()->route('departments');
+    }
+
+    private function isDepartmentBlocked($id) : bool
+    {
+        return in_array(intval($id), [1,2]);
     }
 }

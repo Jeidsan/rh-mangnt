@@ -12,11 +12,14 @@
                 <a href="{{ route('rh-users.new-colaborator') }}" class="btn btn-primary">Create a new RH colaborator</a>
             </div>
 
-            <table class="table w-50" id="table">
+            <table class="table" id="table">
                 <thead class="table-dark">
                     <th>Nome</th>
                     <th>E-mail</th>
-                    <th>Permissões</th>
+                    <th>Role</th>
+                    <th>Salário</th>
+                    <th>Admission date</th>
+                    <th>City</th>
                     <th></th>
                 </thead>
                 <tbody>
@@ -24,11 +27,14 @@
                         <tr>
                             <td>{{ $colaborator->name }}</td>
                             <td>{{ $colaborator->email }}</td>
-                            <td>{{ implode(', ', json_decode($colaborator->permissions)) }}</td>
+                            <td>{{ $colaborator->role }}</td>
+                            <td>{{ Number::currency($colaborator->detail->salary, 'BRL') }}</td>
+                            <td>{{ $colaborator->detail->admission_date }}</td>
+                            <td>{{ $colaborator->detail->city }}</td>
                             <td>
                                 <div class="d-flex gap-3 justify-content-end">
-                                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-pen-to-square me-2"></i>Edit</a>
-                                    <a href="#" class="btn btn-sm btn-outline-dark"><i class="fa-regular fa-trash-can me-2"></i>Delete</a>
+                                    <a href="{{ route('rh-users.edit-colaborator', [ 'id' => $colaborator->id ]) }}" class="btn btn-sm btn-outline-dark ms-3"><i class="fa-regular fa-pen-to-square me-2"></i>Edit</a>
+                                    <a href="#" class="btn btn-sm btn-outline-dark ms-3"><i class="fa-regular fa-trash-can me-2"></i>Delete</a>
                                 </div>
                             </td>
                         </tr>

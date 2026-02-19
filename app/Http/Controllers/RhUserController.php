@@ -14,7 +14,7 @@ class RhUserController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
-        $colaborators = User::where('role', 'rh')->get();
+        $colaborators = User::with('detail')->where('role', 'rh')->get();
         return view('colaborators.rh-users', compact('colaborators'));
     }
 
@@ -70,6 +70,10 @@ class RhUserController extends Controller
             'admission_date.date_format' => 'O campo data de admissão deve estar no formato AAAA-MM-DD.',
         ]);
 
+        if( $request->select_department === 2 ) {
+            return redirect()->route('home');
+        }
+
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
@@ -89,4 +93,41 @@ class RhUserController extends Controller
 
         return redirect()->route('rh-users')->with('success', 'Colaborador criado com sucesso!');
     }
+
+    public function editRhColaborator($id) : View
+    {
+        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        $colaborator = User::with('detail')->where('role', 'rh')->findOrFail($id);
+        $departments = Department::all();
+
+        return view('colaborators.edit-rh-user', compact('colaborator', 'departments'));
+    }
+
+    public function updateRhColaborator(Request $request)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'salary' => 'required|decimal:2',
+            'admission_date' => 'required|date_format:Y-m-d',
+        ], [
+            'user_id.required' => 'O campo ID do usuário é obrigatório.',
+            'user_id.exists' => 'O usuário selecionado é inválido.',
+            'salary.required' => 'O campo salário é obrigatório.',
+            'salary.decimal' => 'O campo salário deve ser um número decimal com até 2 casas decimais.',
+            'admission_date.required' => 'O campo data de admissão é obrigatório.',
+            'admission_date.date_format' => 'O campo data de admissão deve estar no formato AAAA-MM-DD.',
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+        $user->detail->update([
+            'salary' => $request->salary,
+            'admission_date' => $request->admission_date,
+        ]);
+
+        return redirect()->route('rh-users')->with('success', 'Colaborador atualizado com sucesso!');
+    }
+
 }
