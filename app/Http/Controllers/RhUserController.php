@@ -130,4 +130,22 @@ class RhUserController extends Controller
         return redirect()->route('rh-users')->with('success', 'Colaborador atualizado com sucesso!');
     }
 
+    public function deleteRhColaborator($id) : View
+    {
+        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        $colaborator = User::findOrFail($id);
+
+        return view('colaborators.delete-rh-user', compact('colaborator'));
+    }
+
+    public function deleteRhColaboratorConfirm($id)
+    {
+        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('rh-users')->with('success', 'Colaborador deletado com sucesso!');
+    }
 }
