@@ -42,8 +42,12 @@
                             <td>{{ Number::currency($colaborator->detail->salary, 'BRL') }}</td>
                             <td>
                                 <div class="d-flex gap-3 justify-content-end">
-                                    <a href="{{ route('rh-users.edit-colaborator', [ 'id' => $colaborator->id ]) }}" class="btn btn-sm btn-outline-dark ms-3"><i class="fa-regular fa-pen-to-square me-2"></i>Edit</a>
-                                    <a href="{{ route('rh-users.delete-colaborator', [ 'id' => $colaborator->id ]) }}" class="btn btn-sm btn-outline-dark ms-3"><i class="fa-regular fa-trash-can me-2"></i>Delete</a>
+                                    @empty($colaborator->deleted_at)
+                                        <a href="{{ route('rh-users.edit-colaborator', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark ms-3"><i class="fa-regular fa-pen-to-square me-2"></i>Edit</a>
+                                        <a href="{{ route('rh-users.delete-colaborator', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark ms-3"><i class="fa-regular fa-trash-can me-2"></i>Delete</a>
+                                    @else
+                                        <a href="{{ route('rh-users.restore-colaborator', ['id' => $colaborator->id]) }}" class="btn btn-sm btn-outline-dark ms-3"><i class="fa-solid fa-trash-arrow-up me-2"></i>Restore</a>
+                                    @endempty
                                 </div>
                             </td>
                         </tr>

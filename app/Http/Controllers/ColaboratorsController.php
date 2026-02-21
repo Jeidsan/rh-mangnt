@@ -13,7 +13,7 @@ class ColaboratorsController extends Controller
     {
         Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
-        $colaborators = User::with('detail', 'department')->where('role', '<>', 'admin')->get();
+        $colaborators = User::withTrashed()->with('detail', 'department')->where('role', '<>', 'admin')->get();
 
         return view('colaborators.admin-all-colaborators', compact('colaborators'));
     }
@@ -33,7 +33,7 @@ class ColaboratorsController extends Controller
 
     public function deleteColaborator($id) : View
     {
-        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+        Auth::user()->can('admin', 'rh') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
         if ( Auth::user()->id == $id ) {
             abort(403, 'Você não está autorizado a acessar esta página.');
@@ -46,7 +46,7 @@ class ColaboratorsController extends Controller
 
     public function deleteColaboratorConfirm($id) : RedirectResponse
     {
-        Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+        Auth::user()->can('admin', 'rh') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
         if ( Auth::user()->id == $id ) {
             abort(403, 'Você não está autorizado a acessar esta página.');
@@ -56,5 +56,15 @@ class ColaboratorsController extends Controller
         $colaborator->delete();
 
         return redirect()->route('colaborators')->with('success', 'Colaborador eliminado com sucesso!');
+    }
+
+    public function restoreColaborator($id) : RedirectResponse
+    {
+        Auth::user()->can('admin', 'rh') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        $colaborator = User::withTrashed()->findOrFail($id);
+        $colaborator->restore();
+
+        return redirect()->route('colaborators')->with('success', 'Colaborador restaurado com sucesso!');
     }
 }
