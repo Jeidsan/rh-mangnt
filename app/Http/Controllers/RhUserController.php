@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ConfirmAccountEmail;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class RhUserController extends Controller
@@ -18,7 +21,7 @@ class RhUserController extends Controller
         return view('colaborators.rh-users', compact('colaborators'));
     }
 
-    public function newColaborator() : View
+    public function newRhColaborator() : View
     {
         Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
@@ -27,7 +30,7 @@ class RhUserController extends Controller
         return view('colaborators.add-rh-user', compact('departments'));
     }
 
-    public function createColaborator(Request $request)
+    public function createRhColaborator(Request $request)
     {
         Auth::user()->can('admin') ?: abort(403, 'Você não está autorizado a acessar esta página.');
 
@@ -74,9 +77,12 @@ class RhUserController extends Controller
             return redirect()->route('home');
         }
 
+        $token = Str::random(60);
+
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->confirmation_token = $token;
         $user->role = 'rh';
         $user->department_id = $request->select_department;
         $user->permissions = json_encode(['rh']);
@@ -90,6 +96,9 @@ class RhUserController extends Controller
             'salary' => $request->salary,
             'admission_date' => $request->admission_date,
         ]);
+
+        Mail::to($request->email)
+            ->send(new ConfirmAccountEmail(route('confirm-account', $token)));
 
         return redirect()->route('rh-users')->with('success', 'Colaborador criado com sucesso!');
     }
