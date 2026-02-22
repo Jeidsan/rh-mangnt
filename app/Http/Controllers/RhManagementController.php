@@ -164,4 +164,23 @@ class RhManagementController extends Controller
 
         return view('colaborators.show-details', compact('colaborator'));
     }
+
+    public function deleteColaborator($id) : View
+    {
+        Auth::user()->can('rh') ?: abort(403, 'Você não tem permissão para acessar esta página.');
+
+        $colaborator = User::findOrFail($id);
+
+        return view('colaborators.delete-colaborator', compact('colaborator'));
+    }
+
+    public function deleteColaboratorConfirm($id) : RedirectResponse
+    {
+        Auth::user()->can('rh') ?: abort(403, 'Você não tem permissão para acessar esta página.');
+
+        $colaborator = User::findOrFail($id);
+        $colaborator->delete();
+
+        return redirect()->route('rh-users.management.home')->with('success', "Colaborador {$colaborator->name} excluído com sucesso.");
+    }
 }
