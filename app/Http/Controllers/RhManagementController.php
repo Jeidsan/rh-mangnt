@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ConfirmAccountEmail;
 use App\Models\Department;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -109,5 +110,47 @@ class RhManagementController extends Controller
             ->send(new ConfirmAccountEmail(route('confirm-account', $token)));
 
         return redirect()->route('rh-users.management.home')->with('success', "Colaborador {$user->name} criado com sucesso.");
+    }
+
+    public function editColaborator($id)
+    {
+        Auth::user()->can('rh') ?: abort(403, 'Você não tem permissão para acessar esta página.');
+
+        $colaborator = User::with('detail')->findOrFail($id);
+        $departments = Department::where('id', '>', 2)->get();
+
+        return view('colaborators.edit-colaborator', compact('colaborator', 'departments'));
+    }
+
+    public function updateColaborator(Request $request) : RedirectResponse
+    {
+        Auth::user()->can('rh') ?: abort(403, 'Você não tem permissão para acessar esta página.');
+
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'select_department' => 'required|exists:departments,id',
+            'salary' => 'required|decimal:2',
+            'admission_date' => 'required|date_format:Y-m-d',
+        ], [
+            'select_department.required' => 'O campo departamento é obrigatório.',
+            'select_department.exists' => 'O departamento selecionado é inválido.',
+            'salary.required' => 'O campo salário é obrigatório.',
+            'salary.decimal' => 'O campo salário deve ser um número decimal com até 2 casas decimais.',
+            'admission_date.required' => 'O campo data de admissão é obrigatório.',
+            'admission_date.date_format' => 'O campo data de admissão deve estar no formato AAAA-MM-DD.',
+        ]);
+
+        if( $request->select_department <= 2 ) {
+            return redirect()->route('home');
+        }
+
+        $user = User::findOrFail($request->user_id);
+        $user->detail->salary = $request->salary;
+        $user->detail->admission_date = $request->admission_date;
+        $user->department_id = $request->select_department;
+        $user->save();
+        $user->detail->save();
+
+        return redirect()->route('rh-users.management.home')->with('success', "Colaborador {$user->name} atualizado com sucesso.");
     }
 }
