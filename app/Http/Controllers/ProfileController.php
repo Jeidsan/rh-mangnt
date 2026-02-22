@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -65,5 +66,37 @@ class ProfileController extends Controller
         $user->save();
 
         return back()->with('success_change_data', 'Dados do usuário atualizados com sucesso.');
+    }
+
+    public function updateUserAddress(Request $request)
+    {
+        $request->validate([
+            'address' => 'required|min:3|max:100',
+            'zip_code' => 'required|min:3|max:10',
+            'city' => 'required|min:3|max:50',
+            'phone' => 'required|min:3|max:20',
+        ],[
+            'address.required' => 'O endereço é obrigatório.',
+            'address.min' => 'O endereço deve conter no mínimo :min caracteres.',
+            'address.max' => 'O endereço deve conter no máximo :max caracteres.',
+            'zip_code.required' => 'O código postal é obrigatório.',
+            'zip_code.min' => 'O código postal deve conter no mínimo :min caracteres.',
+            'zip_code.max' => 'O código postal deve conter no máximo :max caracteres.',
+            'city.required' => 'A cidade é obrigatória.',
+            'city.min' => 'A cidade deve conter no mínimo :min caracteres.',
+            'city.max' => 'A cidade deve conter no máximo :max caracteres.',
+            'phone.required' => 'O telefone é obrigatório.',
+            'phone.min' => 'O telefone deve conter no mínimo :min caracteres.',
+            'phone.max' => 'O telefone deve conter no máximo :max caracteres.',
+        ]);
+
+        $user = User::with('detail')->findOrFail(auth()->id());
+        $user->address = $request->address;
+        $user->zip_code = $request->zip_code;
+        $user->city = $request->city;
+        $user->phone = $request->phone;
+        $user->detail->save();
+
+        return back()->with('success_change_address', 'Endereço do usuário atualizado com sucesso.');
     }
 }
