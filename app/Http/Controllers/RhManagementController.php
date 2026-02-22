@@ -183,4 +183,14 @@ class RhManagementController extends Controller
 
         return redirect()->route('rh-users.management.home')->with('success', "Colaborador {$colaborator->name} excluído com sucesso.");
     }
+
+    public function restoreColaborator($id) : RedirectResponse
+    {
+        Auth::user()->can('rh') ?: abort(403, 'Você não tem permissão para acessar esta página.');
+
+        $colaborator = User::withTrashed()->findOrFail($id);
+        $colaborator->restore();
+
+        return redirect()->route('rh-users.management.home')->with('success', "Colaborador {$colaborator->name} restaurado com sucesso.");
+    }
 }
