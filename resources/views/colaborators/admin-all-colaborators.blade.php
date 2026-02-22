@@ -34,7 +34,7 @@
                                     <span class="badge bg-success">Ativo</span>
                                 @endempty
                             </td>
-                            <td>{{ $colaborator->department->name }}</td>
+                            <td>{{ $colaborator->department->name ?? '-' }}</td>
                             <td>{{ $colaborator->role }}</td>
                             <td>{{ $colaborator->detail->admission_date }}</td>
                             <td>{{ Number::currency($colaborator->detail->salary, 'BRL') }}</td>
