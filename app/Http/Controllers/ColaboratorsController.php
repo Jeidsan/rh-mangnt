@@ -67,4 +67,13 @@ class ColaboratorsController extends Controller
 
         return redirect()->route('colaborators')->with('success', 'Colaborador restaurado com sucesso!');
     }
+
+    public function home() : View
+    {
+        Auth::user()->can('colaborator') ?: abort(403, 'Você não está autorizado a acessar esta página.');
+
+        $colaborator = User::with('detail', 'department')->findOrFail(Auth::id());
+
+        return view('colaborators.show-details', compact('colaborator'));
+    }
 }

@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
         } elseif( auth()->user()->role ==='rh' ) {
             return redirect()->route('rh-users.management.home');
         } else {
-            die('Home do colaborador');
+            return redirect()->route('colaborator');
         }
     })->name('home');
 
@@ -63,5 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/colaborators/delete-confirm/{id}', [ColaboratorsController::class, 'deleteColaboratorConfirm'])->name('colaborators.delete-confirm');
     Route::get('/colaborators/restore/{id}', [ColaboratorsController::class, 'restoreColaborator'])->name('colaborators.restore');
 
-    Route::get('admin/home', [AdminController::class, 'home'])->name('admin.home');
+    Route::get('/admin/home', [AdminController::class, 'home'])->name('admin.home');
+
+    Route::get('/colaborator', [ColaboratorsController::class, 'home'])->name('colaborator');
 });

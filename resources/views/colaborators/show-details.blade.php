@@ -1,16 +1,10 @@
 <x-layout-app app-title="Detalhes do colaborador">
-
     <div class="w-100 p-4">
-
         <h3>Detalhes do colaborador</h3>
-
         <hr>
-
         <div class="container-fluid">
             <div class="row mb-3">
-
                 <div class="col">
-
                     <p>Name: <strong>{{ $colaborator->name }}</strong></p>
                     <p>Email: <strong>{{ $colaborator->email }}</strong></p>
                     <p>Role: <strong>{{ $colaborator->role }}</strong></p>
@@ -29,7 +23,6 @@
                         @endempty
                     </p>
                 </div>
-
                 <div class="col">
                     <p>Address: <strong>{{ $colaborator->detail->address }}</strong></p>
                     <p>Zip code: <strong>{{ $colaborator->detail->zip_code }}</strong></p>
@@ -40,9 +33,7 @@
                 </div>
             </div>
         </div>
-
         <button class="btn btn-outline-dark" onclick="history.back()"><i class="fas fa-arrow-left me-2"></i>Back</button>
-
     </div>
 
 </x-layout-app>
